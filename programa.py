@@ -4,12 +4,12 @@
 # os valores depois de "->" indicam o retorno esperado do método
 
 from abc import ABC, abstractmethod
-from typing import List, Set
+from typing import List, Set, Optional
 
 
 class Entidade(ABC):
     def __init__(self, id_entidade: int = None):
-        self.id_entidade = id_entidade  # todos os filhos de entidade tem ID.
+        self.id = id_entidade  # todos os filhos de entidade tem ID.
 
     @abstractmethod
     def __str__(self) -> str:
@@ -23,7 +23,7 @@ class Instrutor(Entidade):
         self.cref = cref
 
     def __str__(self) -> str:
-        return f"Instrutor(id={self.id_entidade}, nome='{self.nome}', cref='{self.cref}')"
+        return f"Instrutor(id={self.id}, nome='{self.nome}', cref='{self.cref}')"
 
 
 class Aluno(Entidade):
@@ -33,7 +33,7 @@ class Aluno(Entidade):
         self.matricula = matricula
 
     def __str__(self) -> str:
-        return f"Aluno(id={self.id_entidade}, nome='{self.nome}', matricula='{self.matricula}')"
+        return f"Aluno(id={self.id}, nome='{self.nome}', matricula='{self.matricula}')"
 
 
 class Exercicio(Entidade):
@@ -43,11 +43,11 @@ class Exercicio(Entidade):
         self.grupo_muscular = grupo_muscular
 
     def __str__(self) -> str:
-        return f"Exercicio(id={self.id_entidade}, nome='{self.nome}', grupo_muscular='{self.grupo_muscular}')"
+        return f"Exercicio(id={self.id}, nome='{self.nome}', grupo_muscular='{self.grupo_muscular}')"
 
 
 class ItemFicha:
-    def __init__(self, exercicio=None, series: int = 0, repeticoes: int = 0):
+    def __init__(self, exercicio: Exercicio = None, series: int = 0, repeticoes: int = 0):
         self.exercicio = exercicio
         self.series = series
         self.repeticoes = repeticoes
@@ -69,7 +69,6 @@ class FichaTreino(Entidade):
 
     def __str__(self) -> str:
         pass
-
 
 class EntidadeDAO:
     def __init__(self):
