@@ -4,8 +4,7 @@
 # os valores depois de "->" indicam o retorno esperado do método
 
 from abc import ABC, abstractmethod
-from typing import List, Set, Optional
-
+from typing import List, Set
 
 class Entidade(ABC):
     def __init__(self, id_entidade: int = None):
@@ -47,10 +46,13 @@ class Exercicio(Entidade):
 
 
 class ItemFicha:
-    def __init__(self, exercicio: Exercicio = None, series: int = 0, repeticoes: int = 0):
+    def __init__(self, exercicio=None, series: int = 0, repeticoes: int = 0):
         self.exercicio = exercicio
         self.series = series
         self.repeticoes = repeticoes
+
+    def __str__(self) -> str:
+        return f"{self.exercicio}: {self.series} séries x {self.repeticoes} repetições"
 
 
 class FichaTreino(Entidade):
@@ -65,10 +67,24 @@ class FichaTreino(Entidade):
         self.itens.append(item)
 
     def remover_item(self, id_exercicio: int) -> None:
-        pass
+        for item in self.itens:
+            if item.exercicio.id == id_exercicio:
+                self.itens.remove(item)
 
     def __str__(self) -> str:
-        pass
+        linhas = []
+        linhas.append(f"FICHA DE TREINO: {self.id}")
+        linhas.append(f"ALUNO: {self.aluno if self.aluno else 'Não existe'}") # delega ao método da respectiva classe aluno para não quebrar encapsulamento. retorna não existe ao invez de nome se aluno não existir
+        linhas.append(f"INSTRUTOR: {self.instrutor if self.instrutor else 'Não existe'}")
+        linhas.append(f"EXERCÍCIOS:")
+
+        if not self.itens:
+            linhas.append("\tNenhum exercício cadastrado nesta ficha.")
+        else:
+            for item in self.itens:
+                linhas.append(f"\t- {item}")
+
+        return "\n".join(linhas) # mais eficiente que ficar concatenando com +=
 
 class EntidadeDAO:
     def __init__(self):
