@@ -1,5 +1,6 @@
+from abc import ABC, @abtractmethod
 class Entidade(ABC):
-    
+
     def __init__(self, id_entidade: int = None):
         self.id = id_entidade  # todos os filhos de entidade tem ID.
 
