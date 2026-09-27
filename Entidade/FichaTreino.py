@@ -1,4 +1,8 @@
 from Entidade import Entidade
+from Aluno import Aluno
+from Instrutor import Instrutor
+from ItemFicha import ItemFicha
+from typing import List, Set
 
 class FichaTreino(Entidade):
     # entidade de transação que agrupa instrutores e alunos.

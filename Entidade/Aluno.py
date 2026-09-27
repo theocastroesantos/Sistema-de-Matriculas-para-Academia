@@ -1,4 +1,5 @@
 from Entidade import Entidade
+from typing import List, Set
 
 class Aluno(Entidade):
     def __init__(self, id_entidade: int = None, nome: str = "", matricula: str = ""):
