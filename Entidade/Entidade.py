@@ -8,3 +8,7 @@ class Entidade(ABC):
     @abstractmethod
     def __str__(self) -> str:
         pass
+
+    @abstractmethod
+    def getNameModel(cls) -> str:
+        pass

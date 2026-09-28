@@ -1,4 +1,4 @@
-from Entidade import Entidade
+from Entidade.Entidade import Entidade
 from typing import List, Set
 
 class Instrutor(Entidade):
@@ -9,3 +9,7 @@ class Instrutor(Entidade):
 
     def __str__(self) -> str:
         return f"Instrutor(id={self.id}, nome='{self.nome}', cref='{self.cref}')"
+
+    @classmethod
+    def getNameModel(cls) -> str:
+        return "Instrutor"

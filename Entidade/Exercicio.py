@@ -1,4 +1,4 @@
-from Entidade import Entidade
+from Entidade.Entidade import Entidade
 from typing import List, Set
 
 class Exercicio(Entidade):
@@ -9,3 +9,7 @@ class Exercicio(Entidade):
 
     def __str__(self) -> str:
         return f"Exercicio(id={self.id}, nome='{self.nome}', grupo_muscular='{self.grupo_muscular}')"
+
+    @classmethod
+    def getNameModel(cls) -> str:
+        return "Exercício"

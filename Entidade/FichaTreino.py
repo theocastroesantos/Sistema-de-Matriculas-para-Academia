@@ -1,7 +1,7 @@
-from Entidade import Entidade
-from Aluno import Aluno
-from Instrutor import Instrutor
-from ItemFicha import ItemFicha
+from Entidade.Entidade import Entidade
+from Entidade.Aluno import Aluno
+from Entidade.Instrutor import Instrutor
+from Entidade.ItemFicha import ItemFicha
 from typing import List, Set
 
 class FichaTreino(Entidade):
@@ -34,3 +34,7 @@ class FichaTreino(Entidade):
                 linhas.append(f"\t- {item}")
 
         return "\n".join(linhas) # mais eficiente que ficar concatenando com +=
+
+    @classmethod
+    def getNameModel(cls) -> str:
+        return "Ficha"
