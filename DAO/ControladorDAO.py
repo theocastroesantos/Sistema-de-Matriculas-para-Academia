@@ -10,9 +10,6 @@ class ControladorDAO:
     def gerenciaDAO(self, tipo_DAO):
         return self.DAOS[tipo_DAO]
 
-    def getList():
-        return self.DAOS
-
 # jeito antigo
 # class ControladorDAO:
 #     def __init__(self, tipo_DAO):
