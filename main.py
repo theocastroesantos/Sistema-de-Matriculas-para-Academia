@@ -1,5 +1,4 @@
 from View.View import Menu
-from EntidadeDAO.EntidadeDAO import EntidadeDAO
 from EntidadeDAO.ControladorDAO import ControladorDAO
 from Entidade.Aluno import Aluno
 from Entidade.Exercicio import Exercicio

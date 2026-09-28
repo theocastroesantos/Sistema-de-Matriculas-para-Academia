@@ -7,16 +7,16 @@ def clearConsole():
     # 'nt' refere-se ao Windows, 'posix' ao Linux/macOS
     os.system('cls' if os.name == 'nt' else 'clear') 
 
-def preencher_objeto(objeto, ignore=None):
+def setAtributesObject(objeto, ignore=None):
     if ignore is None:
         ignore = []
 
-    for atributo in vars(objeto):
-        if atributo in ignore:
+    for atribute in vars(objeto):
+        if atribute in ignore:
             continue
 
-        valor = input(f"Informe o {atributo}: ")
-        setattr(objeto, atributo, valor)
+        value = input(f"Informe o {atribute}: ")
+        setattr(objeto, atribute, value)
 
 class Menu():
     WIDTH_BAR = 50
@@ -29,16 +29,16 @@ class Menu():
         while True:
             clearConsole()
             self.printSystemName()
-            self.printMenuOptions(self.DAOController)
+            self.printMenuOptions()
             self.printBar()
 
             option = input("Digite uma opção: ")
             if option == '0':
                 exit()
 
-            self.redirectToSubMenu(self.DAOController, option)
+            self.redirectToSubMenu(option)
 
-    def subMenu(self, ControladorDAO, entidadeClass):
+    def showSubMenu(self, entidadeClass):
         clearConsole()
 
         entityName = entidadeClass.getNameModel()
@@ -48,30 +48,30 @@ class Menu():
             print("1 - Incluir")
             print("2 - Atualizar") 
             print("3 - Excluir") 
-            print("4 - PecontroladorDAOsquisar")   
+            print("4 - Pesquisar")   
             print("0 - Voltar")       
 
             self.printBar()
             
-            opcao = input("Digite uma operação: ")
+            option = input("Digite uma operação: ")
 
             clearConsole()
-            match opcao:
+            match option:
                 case "0":
-                    self.menu_principal()
+                    return
                 case "1":
                     
-                    object = entidadeClass()
-                    preencher_objeto(object)
-                    ControladorDAO.gerenciaDAO(entidadeClass).salvar(object)
+                    obj = entidadeClass()
+                    setAtributesObject(obj)
+                    self.DAOController.gerenciaDAO(entidadeClass).salvar(obj)
                     if self.confirmOperation():
-                        ControladorDAO.gerenciaDAO(entidadeClass).persistir(entityName)
+                        self.DAOController.gerenciaDAO(entidadeClass).persistir(entityName)
                     else:
-                        ControladorDAO.gerenciaDAO(entidadeClass).apagar(object.id)
+                        self.DAOController.gerenciaDAO(entidadeClass).apagar(obj.id)
                 case "2":
-                    ControladorDAO.buscar()
+                    self.DAOController.buscar()
                 case "3":
-                    ControladorDAO.carregar()
+                    self.DAOController.carregar()
 
     def confirmOperation(self) -> bool:
         while True:
@@ -98,18 +98,18 @@ class Menu():
         print(" BEM VINDO A CODEFIT ")
         self.printBar()
 
-    def printMenuOptions(self, DAOController):
+    def printMenuOptions(self):
         i = 0
-        for entity in DAOController.DAOS:
+        for entity in self.DAOController.DAOS:
             i += 1
             print(f"{i} - {entity.getNameModel()}")
 
         print("0 - Sair")
 
-    def redirectToSubMenu(self, DAOController, option):
+    def redirectToSubMenu(self, option):
         try:
-            entity = list(DAOController.DAOS)[int(option) - 1]
-            self.subMenu(DAOController, entity)
+            entity = list(self.DAOController.DAOS)[int(option) - 1]
+            self.showSubMenu(entity)
         except (ValueError, IndexError):
             print("Opção inválida")
 
