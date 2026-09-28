@@ -83,7 +83,7 @@ class Menu():
                             dao.recuperar(entityName) # recupera se não
                     else:
                         print("Objeto não encontrado.")
-                case "3":
+                case "5":
                     dao = self.DAOController.gerenciaDAO(entidadeClass)
                     objetos = dao.carregar()
                     
@@ -97,6 +97,22 @@ class Menu():
                             print("-" * self.WIDTH_BAR)
                     else:
                         print(f"Nenhum registro de {entityName} encontrado.")
+                case "4": # mesma coisa do 5 mas faz com um objeto cujo id é fornecido pelo usuario
+                    dao = self.DAOController.gerenciaDAO(entidadeClass)
+                    id_busca = input(f"Informe o ID do(a) {entityName}: ")
+                    
+                    obj_encontrado = dao.buscar(id_busca)
+                    
+                    self.printMenuName(f"RESULTADO DA BUSCA - {entityName}")
+                    if obj_encontrado:
+                        print(f"ID: {obj_encontrado.id}")
+                        for atribute, value in vars(obj_encontrado).items():
+                            if atribute != 'id':
+                                print(f"  {atribute}: {value}")
+                        print("-" * self.WIDTH_BAR)
+                    else:
+                        print(f"Nenhum registo de {entityName} encontrado com o ID '{id_busca}'.")
+                    
                     
 
     def confirmOperation(self) -> bool:
