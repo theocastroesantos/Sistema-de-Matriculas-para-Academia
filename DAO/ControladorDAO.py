@@ -1,4 +1,4 @@
-from EntidadeDAO.EntidadeDAO import EntidadeDAO
+from DAO.EntidadeDAO import EntidadeDAO
 
 class ControladorDAO:
     def __init__(self, tipos_DAO):

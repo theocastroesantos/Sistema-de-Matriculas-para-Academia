@@ -7,7 +7,7 @@ def clearConsole():
     # 'nt' refere-se ao Windows, 'posix' ao Linux/macOS
     os.system('cls' if os.name == 'nt' else 'clear') 
 
-def setAtributesObject(objeto, ignore=NoneD.Controlad):
+def setAtributesObject(objeto, ignore=None):
     if ignore is None:
         ignore = []
 
