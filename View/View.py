@@ -84,7 +84,20 @@ class Menu():
                     else:
                         print("Objeto não encontrado.")
                 case "3":
-                    self.DAOController.carregar()
+                    dao = self.DAOController.gerenciaDAO(entidadeClass)
+                    objetos = dao.carregar()
+                    
+                    self.printMenuName(f"LISTA DE {entityName}")
+                    if objetos: # testa se a lista tiver objetos 
+                        for obj in objetos: # itera sobre a lista e imprime o id seguido por todos os outros atributos
+                            print(f"ID: {obj.id}") # usando o vars object
+                            for atribute, value in vars(obj).items(): # imprime dinamicamente atributo e valor da lista de objetos
+                                if atribute != 'id': # se não for id...
+                                    print(f"  {atribute}: {value}")
+                            print("-" * self.WIDTH_BAR)
+                    else:
+                        print(f"Nenhum registro de {entityName} encontrado.")
+                    
 
     def confirmOperation(self) -> bool:
         while True:
