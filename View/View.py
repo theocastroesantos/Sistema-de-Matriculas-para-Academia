@@ -1,4 +1,4 @@
-from EntidadeDAO.ControladorDAO import ControladorDAO
+from DAO.ControladorDAO import ControladorDAO
 from enum import Enum
 
 import os
@@ -7,7 +7,7 @@ def clearConsole():
     # 'nt' refere-se ao Windows, 'posix' ao Linux/macOS
     os.system('cls' if os.name == 'nt' else 'clear') 
 
-def setAtributesObject(objeto, ignore=None):
+def setAtributesObject(objeto, ignore=NoneD.Controlad):
     if ignore is None:
         ignore = []
 
