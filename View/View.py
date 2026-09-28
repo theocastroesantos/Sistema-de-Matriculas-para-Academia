@@ -69,7 +69,20 @@ class Menu():
                     else:
                         self.DAOController.gerenciaDAO(entidadeClass).apagar(obj.id)
                 case "2":
-                    self.DAOController.buscar()
+                    dao = self.DAOController.gerenciaDAO(entidadeClass)
+                    id_busca = input("Informe o ID do objeto que deseja atualizar: ") 
+                    
+                    obj_existente = dao.buscar(id_busca) # busca o objeto fornecido pelo usuário
+                    if obj_existente: # se existe...
+                        setAtributesObject(obj_existente, ignore=["id"]) # solicita novos valores pelo usuário. id é intocável por conta do ignore id.
+                        dao.atualizar(obj_existente) # atualiza o objeto
+                        if self.confirmOperation(): # confirma a operação
+                            dao.persistir(entityName) # persiste se for confirmado
+                            print("Objeto atualizado")
+                        else:
+                            dao.recuperar(entityName) # recupera se não
+                    else:
+                        print("Objeto não encontrado.")
                 case "3":
                     self.DAOController.carregar()
 

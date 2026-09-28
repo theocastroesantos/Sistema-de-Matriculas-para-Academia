@@ -9,8 +9,10 @@ from Entidade.Instrutor import Instrutor
 class Program:
     @staticmethod
     def main():
-        DAOController =  ControladorDAO([Aluno, Exercicio, FichaTreino, ItemFicha, Instrutor]) 
+        DAOController = ControladorDAO([Aluno, Exercicio, FichaTreino, ItemFicha, Instrutor])
         menu = Menu(DAOController)
         menu.showMenu()
 
-Program.main()
+
+if __name__ == "__main__":
+    Program.main()
