@@ -98,7 +98,23 @@ class Menu():
                         print("Registro não encontrado.")
 
                 case OperationDAO.DELETE:
-                    logicaDoDaniloAqui = logicaDoDaniloAqui    
+                    id = input(f"digite o id do {entityName}:")
+                    obj_busca = dao.buscar(id)
+
+                    if obj_busca:
+                        
+                        if self.confirmOperation():
+                            dao.apagar(id)
+                            dao.persistir(entityName)
+                            print(f"{entityName} apagado com sucesso")
+
+                        else:
+                            print("operação concelada")
+
+                    else:
+                        print(f"{entityName} não existe")
+                        
+                       
 
                 case OperationDAO.SEARCH:
                     id_busca = input(f"Informe o ID do(a) {entityName}: ")
