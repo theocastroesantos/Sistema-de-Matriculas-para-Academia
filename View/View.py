@@ -1,10 +1,8 @@
 from DAO.ControladorDAO import ControladorDAO
 from enum import Enum
-
 import os
 
 def clearConsole():
-    # 'nt' refere-se ao Windows, 'posix' ao Linux/macOS
     os.system('cls' if os.name == 'nt' else 'clear') 
 
 def setAtributesObject(objeto, ignore=None):
@@ -19,18 +17,19 @@ def setAtributesObject(objeto, ignore=None):
         setattr(objeto, atribute, value)
 
 class OperationDAO(Enum):
-
     NONE = (0, "0", "Voltar")
     INSERT = (1, "1", "Inserir")
     UPDATE = (2, "2", "Atualizar")
     DELETE = (3, "3", "Excluir")
     SEARCH = (4, "4", "Buscar")
     SEARCH_ALL = (5, "5", "Buscar Todos")
+    GERIR_ITENS = (6, "6", "Gerir Exercícios da Ficha")
 
     def __init__(self, code, char, operationName):
         self.code = code
         self.char = char
         self.operationName = operationName
+
 
 class Menu():
     WIDTH_BAR = 50
@@ -39,7 +38,6 @@ class Menu():
         self.DAOController = DAOController
 
     def showMenu(self):
-        
         while True:
             clearConsole()
             self.printSystemName()
@@ -81,9 +79,9 @@ class Menu():
                         dao.apagar(obj.id)
 
                 case OperationDAO.UPDATE:
-                    id_busca = input("Informe o ID do registro que deseja atualizar: ")        
+                    id_busca = int(input("Informe o ID do registro que deseja atualizar: "))        
                     obj_existente = dao.buscar(id_busca) 
-                    if obj_existente: # se existe...
+                    if obj_existente:
                         setAtributesObject(obj_existente, ignore=["id"])
                         dao.atualizar(obj_existente) 
                         if self.confirmOperation():
@@ -98,26 +96,21 @@ class Menu():
                         print("Registro não encontrado.")
 
                 case OperationDAO.DELETE:
-                    id = input(f"digite o id do {entityName}:")
-                    obj_busca = dao.buscar(id)
+                    id_apagar = int(input(f"digite o id do {entityName}: "))
+                    obj_busca = dao.buscar(id_apagar)
 
                     if obj_busca:
-                        
                         if self.confirmOperation():
-                            dao.apagar(id)
+                            dao.apagar(id_apagar)
                             dao.persistir(entityName)
                             print(f"{entityName} apagado com sucesso")
-
                         else:
                             print("operação concelada")
-
                     else:
                         print(f"{entityName} não existe")
-                        
-                       
 
                 case OperationDAO.SEARCH:
-                    id_busca = input(f"Informe o ID do(a) {entityName}: ")
+                    id_busca = int(input(f"Informe o ID do(a) {entityName}: "))
                 
                     obj_encontrado = dao.buscar(id_busca)
                     
@@ -140,6 +133,57 @@ class Menu():
                             self.printBar()
                     else:
                         print(f"Nenhum registro de {entityName} encontrado.")   
+
+                case OperationDAO.GERIR_ITENS:
+                    if entityName != "Ficha":
+                        print("Esta opção é única para o menu de Fichas de Treino.")
+                    else:
+                        id_ficha = int(input("Informe o ID da Ficha de Treino: "))
+                        ficha = dao.buscar(id_ficha)
+
+                        if ficha:
+                            print(f"\nGerindo Ficha ID {ficha.id}")
+                            print("1 - Adicionar Exercício (ItemFicha)")
+                            print("2 - Remover Exercício (ItemFicha)")
+                            escolha = input("Escolha a operação: ")
+
+                            if escolha == "1":
+                                from Entidade.Exercicio import Exercicio
+                                from Entidade.ItemFicha import ItemFicha
+                                
+                                dao_exercicio = self.DAOController.gerenciaDAO(Exercicio)
+                                id_exercicio = int(input("Informe o ID do Exercício a adicionar: "))
+                                exercicio = dao_exercicio.buscar(id_exercicio)
+
+                                if exercicio:
+                                    series = int(input("Informe a quantidade de séries: "))
+                                    repeticoes = int(input("Informe a quantidade de repetições: "))
+
+                                    novo_item = ItemFicha(exercicio=exercicio, series=series, repeticoes=repeticoes)
+                                    ficha.adicionar_item(novo_item)
+                                    
+                                    if self.confirmOperation():
+                                        dao.persistir(entityName)
+                                        print("Exercício adicionado.")
+                                    else:
+                                        dao.recuperar(entityName)
+                                        print("Operação cancelada.")
+                                else:
+                                    print(f"Nenhum exercício encontrado com o ID {id_exercicio}.")
+
+                            elif escolha == "2":
+                                id_exercicio_remover = int(input("Informe o ID do Exercício: "))
+                                
+                                if self.confirmOperation():
+                                    ficha.remover_item(id_exercicio_remover)
+                                    dao.persistir(entityName)
+                                    print("Exercício removido da ficha.")
+                                else:
+                                    print("Operação cancelada.")
+                            else:
+                                print("Opção inválida.")
+                        else:
+                            print("Ficha de treino não encontrada.")
 
             input("\nAperte enter para continuar...")                   
 
@@ -209,4 +253,3 @@ class Menu():
 
     def printBar(self):
         print("=" * self.WIDTH_BAR)
-    
