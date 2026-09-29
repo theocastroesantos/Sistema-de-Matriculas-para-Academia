@@ -67,22 +67,28 @@ class Menu():
                 
                 case OperationDAO.INSERT:            
                     obj = entidadeClass()
-                    setAtributesObject(obj)
+                    if entityName == "Ficha":
+                        setAtributesObject(obj, ignore=["itens"])
+                    else:
+                        setAtributesObject(obj)
+                        
                     dao.salvar(obj)
                     if self.confirmOperation():
                         dao.persistir(entityName)
                         clearConsole()
-                        print("Registro inserido com sucesso!")
+                        print("Registro inserido com sucesso.")
                     else:
                         clearConsole()
-                        print("Inserção do registro cancelada!")    
+                        print("Inserção do registro cancelada.")    
                         dao.apagar(obj.id)
 
                 case OperationDAO.UPDATE:
                     id_busca = int(input("Informe o ID do registro que deseja atualizar: "))        
                     obj_existente = dao.buscar(id_busca) 
                     if obj_existente:
-                        setAtributesObject(obj_existente, ignore=["id"])
+                        ignorar = ["id", "itens"] if entityName == "Ficha" else ["id"]
+                        setAtributesObject(obj_existente, ignore=ignorar)
+                        
                         dao.atualizar(obj_existente) 
                         if self.confirmOperation():
                             dao.persistir(entityName)

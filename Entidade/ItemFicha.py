@@ -10,7 +10,11 @@ class ItemFicha(Entidade):
         self.repeticoes = repeticoes
 
     def __str__(self) -> str:
-        return f"{self.exercicio}: {self.series} séries x {self.repeticoes} repetições"
+        # hassattr = "has atribute" - verifica se determinado objeto tem tal variável tem tal atributo. se sim, imprime o NOME e não a referência.
+        return f"{self.exercicio.nome if hasattr(self.exercicio, 'nome') else self.exercicio} - {self.series} séries x {self.repeticoes} repetições"
+
+    def __repr__(self) -> str:
+        return self.__str__()
 
     @classmethod
     def getNameModel(cls) -> str:

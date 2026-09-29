@@ -7,7 +7,7 @@ class EntidadeDAO:
 
     def buscar(self, id_entidade: int):
         for entidade in self._entidades:
-            if entidade.id == id_entidade:
+            if str(entidade.id) == str(id_entidade):
                 return entidade
         return None
 
