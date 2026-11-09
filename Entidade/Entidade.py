@@ -41,5 +41,5 @@ class Entidade(ABC):
             return self.id >= outro.id
         return NotImplemented
 
-    def __hash__(self) -> int:
+    def __hash__(self) -> int: # força o python a somente usar o id para calcular o endereço
         return hash(self.id)
