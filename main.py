@@ -1,4 +1,4 @@
-from View.View import Menu
+from Visao.Menu import Calculadora
 from DAO.ControladorDAO import ControladorDAO
 from Entidade.Aluno import Aluno
 from Entidade.Exercicio import Exercicio
@@ -10,8 +10,7 @@ class Program:
     @staticmethod
     def main():
         DAOController = ControladorDAO([Aluno, Exercicio, FichaTreino, ItemFicha, Instrutor])
-        menu = Menu(DAOController)
-        menu.showMenu()
+        Calculadora().mainloop()
 
 
 if __name__ == "__main__":
