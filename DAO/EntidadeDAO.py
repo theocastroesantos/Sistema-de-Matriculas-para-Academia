@@ -1,38 +1,58 @@
 from typing import Set, List, Optional
 import pickle
+from excecao  import PersistenceException
+from typing import TypeVar, Generic
+from Entidade.Entidade import Entidade
 
-class EntidadeDAO:
+E = TypeVar("E", bound=Entidade)
+
+class EntidadeDAO(Generic[E]):
+
     def __init__(self):
-        self._entidades = set()
+        self._entidades: set[E] = set()
 
-    def buscar(self, id_entidade: int):
+    def buscar(self, id_entidade: int) -> E:
         for entidade in self._entidades:
             if str(entidade.id) == str(id_entidade):
                 return entidade
-        return None
+        raise PersistenceException("buscar",id_entidade,"entidade nao encontrada")
 
-    def salvar(self, entidade) -> bool:
-        if self.buscar(entidade.id) is not None:
-            return False
-        self._entidades.add(entidade)
-        return True
+    def salvar(self, entidade:E) -> bool:
+        try:
+            self.buscar(entidade.id)
 
-    def atualizar(self, entidade) -> bool:
-        entidade_antiga = self.buscar(entidade.id)
-        if entidade_antiga is None:
-            return False
-        self._entidades.remove(entidade_antiga)
-        self._entidades.add(entidade)
-        return True
+        except PersistenceException:
+            self._entidades.add(entidade)
+            return True
 
-    def apagar(self, id_entidade: int):
-        entidade_alvo = self.buscar(id_entidade)
-        if entidade_alvo is None:
-            return None
-        self._entidades.remove(entidade_alvo)
-        return entidade_alvo
+        raise PersistenceException("salvar",entidade.id, "entidade ja existe" )
+            
+
+    def atualizar(self, entidade:E) -> bool:
+        try:
+            entidade_antiga = self.buscar(entidade.id)
+
+        except PersistenceException:
+            raise PersistenceException("atualizar", entidade.id, "entidade nao encontrada")
+        
+        else:
+            self._entidades.remove(entidade_antiga)
+            self._entidades.add(entidade)
+            return True
+
+    def apagar(self, id_entidade: int) -> E:
+        try:    
+            entidade_alvo = self.buscar(id_entidade)
+        except PersistenceException: 
+            raise PersistenceException("apagar", id_entidade, "entidade nao encontrada")
+        else:        
+            self._entidades.remove(entidade_alvo)
+            return entidade_alvo
     
-    def carregar(self):
+    def carregar(self) -> list[E]:
+
+        if not self._entidades:
+            raise PersistenceException("carregar",None,"conjunto vazio")
         return sorted(list(self._entidades), key=lambda e: e.id) # sorted() recebe a lista criada e a reordena. o parâmetro key utiliza uma função anônima (lambda) que faz o algoritmo olhar o atributo id de cada objeto e para determinar a sua posição final
 
     def persistir(self, nome_arquivo: str) -> None:
