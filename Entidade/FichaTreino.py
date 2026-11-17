@@ -13,6 +13,7 @@ class FichaTreino(Entidade):
         self.itens: List[ItemFicha] = []  # ficha é uma lista de exercícios.
 
     def adicionar_item(self, item: ItemFicha) -> None:
+        item.id_ficha = self.id
         self.itens.append(item)
 
     def remover_item(self, id_exercicio: int) -> None:

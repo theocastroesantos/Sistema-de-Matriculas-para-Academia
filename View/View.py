@@ -86,13 +86,8 @@ class Menu():
                     id_busca = int(input("Informe o ID do registro que deseja atualizar: "))        
                     obj_existente = dao.buscar(id_busca) 
                     if obj_existente:
-<<<<<<< HEAD
-                        setAtributesObject(obj_existente, ignore=["id"])
-=======
                         ignorar = ["id", "itens"] if entityName == "Ficha" else ["id"]
                         setAtributesObject(obj_existente, ignore=ignorar)
-                        
->>>>>>> 46f4c4c0de043b5ac02d82e3415a83549b10e804
                         dao.atualizar(obj_existente) 
                         if self.confirmOperation():
                             dao.persistir(entityName)

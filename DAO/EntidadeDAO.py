@@ -1,6 +1,6 @@
 from typing import Set, List, Optional
 import pickle
-from excecao  import PersistenceException
+from DAO.excecao import PersistenceException
 from typing import TypeVar, Generic
 from Entidade.Entidade import Entidade
 
@@ -62,6 +62,7 @@ class EntidadeDAO(Generic[E]):
     def recuperar(self, nome_arquivo: str) -> None: # tratamento de exceção se o arquivo não existe
         try:
             with open(nome_arquivo, "rb") as arquivo:
-                self._entidades = pickle.load(arquivo)
+                # Recalcula os hashes após o pickle restaurar os atributos.
+                self._entidades = set(pickle.load(arquivo))
         except FileNotFoundError:
             self._entidades = set() #se o arquivo não existe ainda inicia com set vazio
