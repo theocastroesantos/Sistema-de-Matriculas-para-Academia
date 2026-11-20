@@ -1,68 +1,66 @@
-from typing import Set, List, Optional
 import pickle
-from DAO.excecao import PersistenceException
-from typing import TypeVar, Generic
+from typing import Any, Generic, Set, Tuple, TypeVar
+from ControladorDAO import PersistenceException
 from Entidade.Entidade import Entidade
 
 E = TypeVar("E", bound=Entidade)
 
+
 class EntidadeDAO(Generic[E]):
+    def __init__(self) -> None:
+        self._entidades: Set[E] = set()
 
-    def __init__(self):
-        self._entidades: set[E] = set()
-
-    def buscar(self, id_entidade: int) -> E:
+    def buscar(self, id_entidade: Any) -> E:
         for entidade in self._entidades:
-            if str(entidade.id) == str(id_entidade):
+            if entidade.id == id_entidade or str(entidade.id) == str(id_entidade):
                 return entidade
-        raise PersistenceException("buscar",id_entidade,"entidade nao encontrada")
+        raise PersistenceException("buscar", "entidade não encontrada", id_entidade)
 
-    def salvar(self, entidade:E) -> bool:
+    def salvar(self, entidade: E) -> None:
+        if not isinstance(entidade, Entidade):
+            raise PersistenceException("salvar", "objeto não instanciado em entidade", entidade)
+
+        if entidade in self._entidades:
+            raise PersistenceException("salvar", "entidade já existe no conjunto", entidade.id)
+
         try:
-            self.buscar(entidade.id)
-
-        except PersistenceException:
             self._entidades.add(entidade)
-            return True
+        except Exception as erro:
+            raise PersistenceException("salvar", f"erro ao adicionar entidade: {erro}", entidade)
 
-        raise PersistenceException("salvar",entidade.id, "entidade ja existe" )
-            
+    def atualizar(self, entidade: E) -> None:
+        if not isinstance(entidade, Entidade):
+            raise PersistenceException("atualizar", "objeto não instanciado em entidade", entidade)
 
-    def atualizar(self, entidade:E) -> bool:
-        try:
-            entidade_antiga = self.buscar(entidade.id)
+        entidade_antiga = self.buscar(entidade.id)
+        self._entidades.remove(entidade_antiga)
+        self._entidades.add(entidade)
 
-        except PersistenceException:
-            raise PersistenceException("atualizar", entidade.id, "entidade nao encontrada")
-        
-        else:
-            self._entidades.remove(entidade_antiga)
-            self._entidades.add(entidade)
-            return True
+    def apagar(self, id_entidade: Any) -> E:
+        entidade_alvo = self.buscar(id_entidade)
+        self._entidades.remove(entidade_alvo)
+        return entidade_alvo
 
-    def apagar(self, id_entidade: int) -> E:
-        try:    
-            entidade_alvo = self.buscar(id_entidade)
-        except PersistenceException: 
-            raise PersistenceException("apagar", id_entidade, "entidade nao encontrada")
-        else:        
-            self._entidades.remove(entidade_alvo)
-            return entidade_alvo
-    
-    def carregar(self) -> list[E]:
-
+    def carregar(self) -> Tuple[E, ...]:
         if not self._entidades:
-            raise PersistenceException("carregar",None,"conjunto vazio")
-        return sorted(list(self._entidades), key=lambda e: e.id) # sorted() recebe a lista criada e a reordena. o parâmetro key utiliza uma função anônima (lambda) que faz o algoritmo olhar o atributo id de cada objeto e para determinar a sua posição final
+            raise PersistenceException("carregar", "conjunto vazio")
+        return tuple(sorted(self._entidades))
 
     def persistir(self, nome_arquivo: str) -> None:
-        with open(nome_arquivo, "wb") as arquivo: # abre em formato de escrever 
-            pickle.dump(self._entidades, arquivo)
+        try:
+            with open(nome_arquivo, "wb") as arquivo:
+                pickle.dump(self._entidades, arquivo)
+        except (OSError, pickle.PickleError) as erro:
+            raise PersistenceException("persistir", f"falha ao gravar arquivo: {erro}", nome_arquivo)
 
-    def recuperar(self, nome_arquivo: str) -> None: # tratamento de exceção se o arquivo não existe
+    def recuperar(self, nome_arquivo: str) -> None:
         try:
             with open(nome_arquivo, "rb") as arquivo:
-                # Recalcula os hashes após o pickle restaurar os atributos.
-                self._entidades = set(pickle.load(arquivo))
+                dados = pickle.load(arquivo)
+                if not isinstance(dados, set):
+                    raise PersistenceException("recuperar", "formatação de dados inválida no arquivo", nome_arquivo)
+                self._entidades = set(dados)
         except FileNotFoundError:
-            self._entidades = set() #se o arquivo não existe ainda inicia com set vazio
+            self._entidades = set()
+        except (OSError, pickle.UnpicklingError, EOFError) as erro:
+            raise PersistenceException("recuperar", f"arquivo corrompido: {erro}", nome_arquivo)
