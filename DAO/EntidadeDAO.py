@@ -1,7 +1,7 @@
 import pickle
 from typing import Any, Generic, Set, Tuple, TypeVar
-from ControladorDAO import PersistenceException
 from Entidade.Entidade import Entidade
+from DAO.Excecao import PersistenceException
 
 E = TypeVar("E", bound=Entidade)
 

@@ -2,7 +2,7 @@ from collections.abc import Callable, Mapping, Sequence
 from dataclasses import dataclass
 from tkinter import ttk
 
-from DAO.excecao import PersistenceException
+from DAO.Excecao import PersistenceException
 
 
 @dataclass(frozen=True)
